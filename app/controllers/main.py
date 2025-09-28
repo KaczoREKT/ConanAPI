@@ -5,4 +5,5 @@ class Controller:
     def __init__(self, model: Model, view: View):
         self.model = model
         self.view = view
+        self.photo_controller = PhotoController(model, view)
 

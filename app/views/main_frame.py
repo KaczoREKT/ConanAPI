@@ -9,9 +9,4 @@ class MainFrame(tk.Frame):
         self.photo_label.grid(row=0, column=0)
 
         self.photo_combobox = ttk.Combobox(self)
-        self.photo_combobox['values'] = ('1.jpg', '2.jpg', '3.jpg')
         self.photo_combobox.grid(row=0, column=1)
-        self.photo_combobox.bind(
-            "<<ComboboxSelected>>",
-            lambda _: self.photo_label.config(image=self.photo_combobox.get())
-        )
