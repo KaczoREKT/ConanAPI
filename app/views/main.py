@@ -1,6 +1,8 @@
 from typing import TypedDict
-from root import Root
-from main_frame import MainFrame
+
+from app.views.main_frame import MainFrame
+from app.views.root import Root
+
 
 class Frames(TypedDict):
     main: MainFrame
@@ -10,7 +12,7 @@ class View:
     def __init__(self):
         self.root = Root()
         self.frames: Frames = {}
-        self._add_frame(MainFrame, 'main')
+        self._add_frame(MainFrame, 'main_frame')
 
     def _add_frame(self, Frame, name: str) -> None:
         self.frames[name] = Frame(self.root)

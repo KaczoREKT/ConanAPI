@@ -4,8 +4,6 @@ from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 import urllib.parse
 
-from utils import save_to_txt
-
 
 class WebScraper:
     def __init__(self):

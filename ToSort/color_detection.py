@@ -1,11 +1,10 @@
-import time
 from pathlib import Path
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 from PIL import ImageGrab
 import logging
-from config import config
+from app.utils.config import config
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
