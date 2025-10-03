@@ -1,5 +1,5 @@
 import yaml
-from utils import read_file
+from app.other.utils import read_file
 
 class Config:
     def __init__(self, path="config.yaml"):

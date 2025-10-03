@@ -42,8 +42,8 @@ def save_to_txt(file_name: str, *output_texts: Union[str, list], timestamp: bool
 
 # Read file from path
 def read_file(file_path):
-    base = Path(__file__).resolve().parent
-    path = base / file_path
+    base = os.getcwd()
+    path = os.path.join(base, file_path)
     with open(path, 'r', encoding='utf-8') as file:
         return file.read()
 

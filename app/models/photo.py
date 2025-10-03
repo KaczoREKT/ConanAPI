@@ -4,9 +4,9 @@ import os
 class Photo:
     def __init__(self):
         base_dir = os.getcwd()
-        print(base_dir)
         self.folder = os.path.join(base_dir, "Screenshots")
         self.screenshots = self.load_screenshots()
+        self.current_tk_image = None
 
 
     def load_screenshots(self):
