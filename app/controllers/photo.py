@@ -1,6 +1,5 @@
 import logging
-
-from PIL import Image, ImageTk
+from app.models.preprocessing import load_image, convert_image_to_tkinter
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -20,19 +19,19 @@ class PhotoController:
 
     def on_change(self, event) -> None:
         logger.info(f"ComboBox change")
-        screenshot_path = self.model.photo.get_screenshot_by_name(self.get_chosen_photo())
+        screenshot_path = self.model.photo.get_screenshot_by_key(self.get_selected_from_combobox())
         self.update_image(screenshot_path)
 
-    def get_chosen_photo(self) -> str:
+    def get_selected_from_combobox(self) -> str:
         result_photo = self.frame.settings_frame.photo_combobox.get()
         return result_photo
 
     def update_image(self, screenshot_path: str) -> None:
-        img = Image.open(screenshot_path)
-        img = img.resize((1024, 600))
-        img = ImageTk.PhotoImage(img)
-        self.model.photo.current_tk_image = img
-        self.update_photo_label(self.model.photo.current_tk_image)
+        img = load_image(screenshot_path)
+        imgtk = convert_image_to_tkinter(img)
+        self.model.photo.current_cv2_image = img
+        self.model.photo.current_tk_image = imgtk
+        self.update_photo_label()
 
-    def update_photo_label(self, image) -> None:
-        self.frame.photo_frame.photo_label.configure(image=image)
+    def update_photo_label(self) -> None:
+        self.frame.photo_frame.photo_label.configure(image=self.model.photo.current_tk_image)

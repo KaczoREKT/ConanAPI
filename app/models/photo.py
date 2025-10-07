@@ -1,15 +1,17 @@
 import os
 
+from app.models.preprocessing import load_image, convert_image_to_tkinter
+
 
 class Photo:
     def __init__(self):
         base_dir = os.getcwd()
         self.folder = os.path.join(base_dir, "Screenshots")
         self.screenshots = self.load_screenshots()
-        self.current_tk_image = None
+        self.current_cv2_image = load_image(list(self.screenshots.values())[0])
+        self.current_tk_image = convert_image_to_tkinter(self.current_cv2_image)
 
-
-    def load_screenshots(self):
+    def load_screenshots(self) -> dict[str, str]:
         files = os.listdir(self.folder)
         screenshots = {
             f: os.path.join(self.folder, f)
@@ -18,8 +20,8 @@ class Photo:
         }
         return screenshots
 
-    def get_screenshot_names(self):
+    def get_screenshot_names(self) -> list[str]:
         return list(self.screenshots.keys())
 
-    def get_screenshot_by_name(self, name):
+    def get_screenshot_by_key(self, name) -> str | None:
         return self.screenshots.get(name)

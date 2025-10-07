@@ -7,3 +7,6 @@ class PhotoFrame(tk.Frame):
 
         self.photo_label = tk.Label(self)
         self.photo_label.grid(row=0, column=0)
+
+
+

@@ -13,7 +13,7 @@ def main2():
     ws.load_from_url(url_list)
 
 if __name__ == "__main__":
-    model = Model()
     view = View()
+    model = Model()
     controller = Controller(model, view)
     controller.start()

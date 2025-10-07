@@ -1,3 +1,4 @@
+from app.controllers.extractor import ExtractorController
 from app.controllers.photo import PhotoController
 from app.models.main import Model
 from app.views.main import View
@@ -7,6 +8,7 @@ class Controller:
         self.model = model
         self.view = view
         self.photo_controller = PhotoController(model, view)
+        self.extractor_controller = ExtractorController(model, view)
 
     def start(self):
         self.view.start_mainloop()
