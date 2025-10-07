@@ -1,3 +1,6 @@
+import logging
+logger = logging.getLogger(__name__)
+
 import os
 
 import cv2
@@ -68,22 +71,29 @@ class EAST(AbstractExtractor):
         super().__init__()
         self.name = "EAST"
         self.parameters = {
-            'confidence_threshold': 0.2,
+            'confidence_threshold': 0.5,
             'nms_threshold': 0.4,
             'size': (320, 320),
-            'scale': 1/255
+            'scale': 1.0 / 255.0,
+            'mean': (123.68, 116.78, 103.94),
+            'swapRB': True,
+            'crop': False
         }
-
-        self.east_model_path = os.path.join(os.getcwd(), 'frozen_east_text_detection.pb')
+        self.east_model_path = os.path.join(os.getcwd(), r'app\other\frozen_east_text_detection.pb')
         self.instance = cv2.dnn.TextDetectionModel_EAST(self.east_model_path)
-        self.instance.setConfidenceThreshold(0.2)
-        self.instance.setNMSThreshold(0.4)
-        self.instance.setInputParams(size=(320, 320), scale=1/255)
+        self.instance.setConfidenceThreshold(self.parameters['confidence_threshold'])
+        self.instance.setNMSThreshold(self.parameters['nms_threshold'])
+        self.instance.setInputParams(
+            scale=self.parameters['scale'],
+            size=self.parameters['size'],
+            mean=self.parameters['mean'],
+            swapRB=self.parameters['swapRB'],
+            crop=self.parameters['crop']
+        )
 
 
     def extract(self, image):
         orig_image = image.copy()
-        orig_image.resize((320, 320))
         inpaint_mask = np.zeros(orig_image.shape[:2], dtype=np.uint8)
         boxes, confs = self.instance.detect(orig_image)
         print('Liczba wykrytych boxów:', len(boxes))
@@ -91,7 +101,7 @@ class EAST(AbstractExtractor):
         for box in boxes:
             cv2.fillPoly(inpaint_mask, [np.array(box, np.int32)], 255)
         inpainted_east_image = cv2.inpaint(orig_image, inpaint_mask, inpaintRadius=5,
-                                           flags=cv2.INPAINT_NS)  # EAST only
+                                               flags=cv2.INPAINT_NS)
         return inpainted_east_image
 
 
