@@ -108,7 +108,7 @@ def pixel_art_descriptor(img_bgr):
     return feat, im, q, m
 
 # --- przykład użycia ---
-img = cv2.imread("zelda_items_images/img.png")  # podaj ścieżkę
+img = cv2.imread("zelda_items_images/Zelda.png")  # podaj ścieżkę
 desc, im32, qimg, mask = pixel_art_descriptor(img)
 print("Descriptor dim:", desc.shape)
 

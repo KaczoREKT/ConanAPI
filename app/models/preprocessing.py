@@ -1,7 +1,8 @@
 import cv2
 from PIL import Image, ImageTk
 import numpy as np
-
+import logging
+logger = logging.getLogger(__name__)
 
 def to_gray(image):
     return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -18,8 +19,9 @@ def load_image(screenshot_path: str):
     return img
 
 def convert_image_to_tkinter(image):
-    img = Image.fromarray(image)
-    imgtk = ImageTk.PhotoImage(image=img)
+    img = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    im = Image.fromarray(img)
+    imgtk = ImageTk.PhotoImage(image=im)
     return imgtk
 
 def mask(image):

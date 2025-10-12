@@ -13,7 +13,6 @@ class ExtractorController:
         extractor_names = self.model.extractor.get_extractor_keys()
         self.frame.settings_frame.extractor_combobox['values'] = extractor_names
         self.model.extractor.instance = self.model.extractor.extractor_dict[extractor_names[0]]
-        self.update_image()
 
     def on_change(self, event) -> None:
         chosen_extractor = self.get_selected_from_combobox()

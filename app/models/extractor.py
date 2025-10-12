@@ -33,14 +33,12 @@ class AbstractExtractor:
 
 
     def extract(self, image):
-        gray_image = to_gray(image)
+        keypoint_image = image.copy()
+        gray_image = to_gray(keypoint_image)
         gray_blur = cv2.GaussianBlur(gray_image, (0, 0), 1.0)
         keypoint, descriptor = self.instance.detectAndCompute(gray_blur, None)
-        print(self.instance)
-        print("wykryto ")
-        print(len(keypoint))
         keypoint_image = cv2.drawKeypoints(
-            image, keypoint, None, color=(0, 255, 0),
+            keypoint_image, keypoint, None, color=(0, 255, 0),
             flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS
         )
         return keypoint_image
@@ -79,30 +77,24 @@ class EAST(AbstractExtractor):
             'swapRB': True,
             'crop': False
         }
-        self.east_model_path = os.path.join(os.getcwd(), r'app\other\frozen_east_text_detection.pb')
+        self.east_model_path = os.path.join(os.getcwd(), 'frozen_east_text_detection.pb')
         self.instance = cv2.dnn.TextDetectionModel_EAST(self.east_model_path)
-        self.instance.setConfidenceThreshold(self.parameters['confidence_threshold'])
-        self.instance.setNMSThreshold(self.parameters['nms_threshold'])
-        self.instance.setInputParams(
-            scale=self.parameters['scale'],
-            size=self.parameters['size'],
-            mean=self.parameters['mean'],
-            swapRB=self.parameters['swapRB'],
-            crop=self.parameters['crop']
-        )
+        self.instance.setConfidenceThreshold(0.03)
+        self.instance.setInputSize((1920, 1088))
 
 
     def extract(self, image):
-        orig_image = image.copy()
-        inpaint_mask = np.zeros(orig_image.shape[:2], dtype=np.uint8)
-        boxes, confs = self.instance.detect(orig_image)
-        print('Liczba wykrytych boxów:', len(boxes))
-        print('Confidence:', confs)
+        boxes, confidences = self.instance.detect(image)
+        keypoint_image = image.copy()
         for box in boxes:
-            cv2.fillPoly(inpaint_mask, [np.array(box, np.int32)], 255)
-        inpainted_east_image = cv2.inpaint(orig_image, inpaint_mask, inpaintRadius=5,
-                                               flags=cv2.INPAINT_NS)
-        return inpainted_east_image
+            if len(box) == 5:
+                cx, cy, w, h, angle = box
+                rect = ((cx, cy), (w, h), angle)
+                pts = cv2.boxPoints(rect).astype(int)
+            else:
+                pts = np.array(box, dtype=int).reshape(-1, 2)
+            cv2.polylines(keypoint_image, [pts], isClosed=True, color=(0, 255, 0), thickness=2)
+        return keypoint_image
 
 
 
