@@ -27,7 +27,7 @@ def update(_):
 if __name__ == '__main__':
     image_path = 'image.jpg'
     image = cv2.imread(image_path)
-    east_path = 'frozen_east_text_detection.pb'
+    east_path = '../../frozen_east_text_detection.pb'
     winname = 'EAST Text Detection'
 
     # Inicjalny rozmiar
