@@ -3,7 +3,7 @@ import pytesseract
 from PIL import Image
 
 
-img_cv = cv2.imread('20250924190109_1.jpg')
+img_cv = cv2.imread('image.jpg')
 
 # By default OpenCV stores images in BGR format and since pytesseract assumes RGB format,
 # we need to convert from BGR to RGB format/mode:

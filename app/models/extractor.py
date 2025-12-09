@@ -47,7 +47,34 @@ class AbstractTextExtractor:
             else:
                 pts = np.array(box, dtype=int).reshape(-1, 2)
             cv2.polylines(keypoint_image, [pts], isClosed=True, color=(0, 255, 0), thickness=1)
+            x, y, w, h = cv2.boundingRect(pts)
+            print(f"x: {x}, y: {y}, width: {w}, height: {h}")
         return keypoint_image
+
+
+class AbstractStatExtractor:
+    """
+    Ekstraktor do statystyk z UI (Pasek zdrowia, ostrość, stamina).
+    Zamiast szukać punktów, analizuje kolory w konkretnym wycinku (ROI).
+    """
+
+    def __init__(self):
+        self.name = None
+        self.roi = None
+
+    def extract(self, image):
+        """Zwraca obraz z narysowanymi statystykami"""
+        val = self.get_value(image)
+        output_image = image.copy()
+        if self.roi:
+            x, y, w, h = self.roi
+            cv2.rectangle(output_image, (x, y), (x + w, y + h), (0, 255, 255), 2)
+            cv2.putText(output_image, f"{self.name}: {val}", (x, y + h + 20),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
+        return output_image
+
+    def get_value(self, image):
+        raise NotImplementedError
 
 
 class SIFT(AbstractFeatureExtractor):
@@ -129,7 +156,7 @@ class DB18(AbstractTextExtractor):
         self.parameters = {
             'binary_threshold': 0.5,
             'polygon_threshold': 0.4,
-            'size': (320, 320),
+            'size': (1920, 1088),
             'scale': 1.0 / 255.0,
             'mean': (123.68, 116.78, 103.94),
             'swapRB': True,
@@ -148,6 +175,94 @@ class DB18(AbstractTextExtractor):
                                      swapRB=self.parameters['swapRB'])
 
 
+class HealthExtractor(AbstractStatExtractor):
+    def __init__(self):
+        super().__init__()
+        self.name = "Health"
+        self.roi = None
+
+        # Zakres koloru zielonego w HSV
+        # H: 35-90 (zielony), S: 50-255 (nasycony), V: 50-255 (jasny)
+        self.lower_green = np.array([35, 50, 50])
+        self.upper_green = np.array([90, 255, 255])
+
+    def extract(self, image):
+        if self.roi is None:
+            print("Szukam paska zdrowia...")
+            self.calibrate(image)
+
+            if self.roi is None:
+                cv2.putText(image, "HP BAR NOT FOUND", (50, 50),
+                            cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+                return image
+
+        val = self.get_value(image)
+        output_image = image.copy()
+        x, y, w, h = self.roi
+
+        cv2.rectangle(output_image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        cv2.putText(output_image, f"HP: {val}%", (x, y + h + 25),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+        return output_image
+
+    def calibrate(self, image):
+        """Automatycznie wykrywa pasek zdrowia na podstawie koloru i kształtu"""
+        hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+        mask = cv2.inRange(hsv, self.lower_green, self.upper_green)
+
+        # Znajdź kontury na masce
+        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+        height, width = image.shape[:2]
+        best_roi = None
+        max_area = 0
+
+        for cnt in contours:
+            x, y, w, h = cv2.boundingRect(cnt)
+
+            # FILTR 1: Pozycja (Musi być w lewej górnej ćwiartce)
+            if x > width / 2 or y > height / 2:
+                continue
+
+            # FILTR 2: Kształt (Pasek jest szeroki, a nie wysoki)
+            aspect_ratio = w / float(h)
+            if aspect_ratio < 3.0:  # Musi być co najmniej 3x szerszy niż wyższy
+                continue
+
+            # FILTR 3: Rozmiar (Ignoruj małe plamki)
+            area = w * h
+            if area < 500:
+                continue
+
+            # Wybieramy największy pasujący obiekt (to prawdopodobnie pasek HP)
+            if area > max_area:
+                max_area = area
+                best_roi = (x, y, w, h)
+
+        if best_roi:
+            self.roi = best_roi
+            print(f"Skalibrowano pasek zdrowia: {self.roi}")
+        else:
+            print("Nie udało się znaleźć paska zdrowia. Upewnij się, że masz pełne HP!")
+
+    def get_value(self, image):
+        if self.roi is None: return 0
+
+        x, y, w, h = self.roi
+        crop = image[y:y + h, x:x + w]
+        if crop.size == 0: return 0
+
+        hsv = cv2.cvtColor(crop, cv2.COLOR_BGR2HSV)
+        mask = cv2.inRange(hsv, self.lower_green, self.upper_green)
+
+        non_zero = cv2.findNonZero(mask)
+        if non_zero is None: return 0
+        rightmost_point = np.max(non_zero[:, 0, 0])
+        percentage = int(((rightmost_point + 1) / w) * 100)
+
+        return  min(100, max(0, percentage))
+
+
 class Extractor:
     def __init__(self):
         self.extractor_dict = {
@@ -155,7 +270,8 @@ class Extractor:
             'ORB': ORB(),
             'EAST': EAST(),
             'DB50': DB50(),
-            'DB18': DB18()
+            'DB18': DB18(),
+            'Health': HealthExtractor()
         }
         self.current_extractor = self.extractor_dict['SIFT']
 
@@ -167,12 +283,15 @@ class Extractor:
 
 
 if __name__ == "__main__":
-    extractor = SIFT()
-    img = cv2.imread(os.path.join(os.getcwd(), '20250924190109_1.jpg'))
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    sift = cv2.SIFT_create()
-    kp, des = sift.detectAndCompute(gray, None)
-    print("Liczba wykrytych punktów:", len(kp))
-    img_kp = cv2.drawKeypoints(img, kp, None, (0, 255, 0), 4)
-    cv2.imshow("SIFT test", img_kp)
+    health_extractor = HealthExtractor()
+    test_image_path = "../../test/Screenshots/Monster_Hunter_Wilds/mh_test_image_2.png"
+    test_image = cv2.imread(test_image_path)
+    health_extractor.calibrate(test_image)
+    cv2.imshow("okno", health_extractor.extract(test_image))
     cv2.waitKey(0)
+    middle_health_image_path = "../../test/Screenshots/Monster_Hunter_Wilds/mh_test_image_middle_hp.jpg"
+    middle_image = cv2.imread(middle_health_image_path)
+    image = health_extractor.extract(middle_image)
+    cv2.imshow("okno", image)
+    cv2.waitKey(0)
+    print(health_extractor.get_value(test_image))
