@@ -1,0 +1,33 @@
+confidence_threshold:
+  type: int
+  widget: spinbox
+  from_: 0.0
+  to: 1
+  step: 0.1
+  default: 0.5
+nms_threshold:
+  type: float
+  widget: spinbox
+  from_: 0.0
+  to: 1.0
+  step: 0.01
+  default: 0.4
+size:
+  type: tuple
+  widget: entry
+  default: (320, 320)
+scale:
+  type: float
+  widget: spinbox
+  from_: 0.0
+  to: 1.0
+  step: 0.01
+  default: 1.0
+mean:
+  type: tuple
+  widget: entry
+  default: [123.68, 116.78, 103.94]
+swapRB:
+  type: bool
+  widget: radiobutton
+  default: true

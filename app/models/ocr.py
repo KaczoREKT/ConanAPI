@@ -13,7 +13,7 @@ class OCR:
         pass
 
     def save_image(self, filename, image):
-        folder_path = Path(main_config['output_folder'])
+        folder_path = Path(config['output_folder'])
         if not Path(folder_path).exists():
             os.mkdir(folder_path)
         if not Path(os.path.join(folder_path, filename)).exists():

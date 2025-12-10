@@ -3,6 +3,7 @@ from app.other.utils import read_file
 
 class Config:
     def __init__(self, path="config.yaml"):
+        self.path = path
         self.config = yaml.safe_load(read_file(path))
 
     def __getitem__(self, item):
@@ -14,8 +15,8 @@ class Config:
     def __delitem__(self, key):
         del self.config[key]
 
-    def save(self, path="config.yaml"):
-        with open(path, "w") as file:
+    def save(self):
+        with open(self.path, "w") as file:
             yaml.safe_dump(self.config, file, default_flow_style=False)
 
 main_config = Config()

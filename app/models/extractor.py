@@ -1,5 +1,7 @@
 import logging
 
+from app.other.utils import str_to_tuple
+
 logger = logging.getLogger(__name__)
 
 import os
@@ -71,13 +73,7 @@ class SIFT(AbstractFeatureExtractor):
     def __init__(self):
         super().__init__()
         self.name = "SIFT"
-        self.parameters = {
-            'nfeatures': 10,
-            'nOctaveLayers': 3,
-            'contrastThreshold': 4,
-            'edgeThreshold': 10,
-            'sigma': 16
-        }
+        self.parameters = Config("parameters/sift.yaml")
         self.instance = cv2.SIFT_create()
 
 
@@ -85,6 +81,7 @@ class ORB(AbstractFeatureExtractor):
     def __init__(self):
         super().__init__()
         self.name = "ORB"
+        self.parameters = Config("parameters/orb.yaml")
         self.instance = cv2.ORB_create()
 
 
@@ -92,41 +89,24 @@ class EAST(AbstractTextExtractor):
     def __init__(self):
         super().__init__()
         self.name = "EAST"
-        self.parameters = {
-            'confidence_threshold': 0.05,
-            'nms_threshold': 0.04,
-            'size': (1920, 1088),
-            'scale': 1.0 / 255.0,
-            'mean': (123.68, 116.78, 103.94),
-            'swapRB': True,
-            'crop': False
-        }
+        self.parameters = Config("parameters/east.yaml")
         self.east_model_path = os.path.join(os.getcwd(), 'frozen_east_text_detection.pb')
         self.instance = cv2.dnn.TextDetectionModel_EAST(self.east_model_path)
         self.set_parameters()
 
     def set_parameters(self):
-        self.instance.setConfidenceThreshold(self.parameters['confidence_threshold'])
-        self.instance.setNMSThreshold(self.parameters['nms_threshold'])
-        self.instance.setInputParams(size=self.parameters['size'],
-                                     scale=self.parameters['scale'],
-                                     mean=self.parameters['mean'],
-                                     swapRB=self.parameters['swapRB'])
+        self.instance.setConfidenceThreshold(self.parameters['confidence_threshold']['default'])
+        self.instance.setNMSThreshold(self.parameters['nms_threshold']['default'])
+        self.instance.setInputParams(size=str_to_tuple(self.parameters['size']['default']),
+                                     scale=self.parameters['scale']['default'],
+                                     mean=self.parameters['mean']['default'],
+                                     swapRB=self.parameters['swapRB']['default'])
 
 
 class DB50(AbstractTextExtractor):
     def __init__(self):
         self.name = "DB50"
-        self.parameters = {
-            'binary_threshold': 0.5,
-            'polygon_threshold': 0.4,
-            'size': (1920, 1088),
-            'scale': 1.0 / 255.0,
-            'mean': (123.68, 116.78, 103.94),
-            'swapRB': True,
-            'crop': True
-
-        }
+        self.parameters = Config("parameters/db50.yaml")
         self.model_path = os.path.join(os.getcwd(), 'DB_TD500_resnet50.onnx')
         try:
             self.instance = cv2.dnn_TextDetectionModel_DB(self.model_path)
@@ -135,20 +115,18 @@ class DB50(AbstractTextExtractor):
             logger.error(e) 
 
     def set_parameters(self):
-        self.instance.setBinaryThreshold(self.parameters['binary_threshold'])
-        self.instance.setPolygonThreshold(self.parameters['polygon_threshold'])
-        self.instance.setInputParams(size=self.parameters['size'],
-                                     scale=self.parameters['scale'],
-                                     mean=self.parameters['mean'],
-                                     swapRB=self.parameters['swapRB'])
+        self.instance.setBinaryThreshold(self.parameters['binary_threshold']['default'])
+        self.instance.setPolygonThreshold(self.parameters['polygon_threshold']['default'])
+        self.instance.setInputParams(size=str_to_tuple(self.parameters['size']['default']),
+                                     scale=self.parameters['scale']['default'],
+                                     mean=str_to_tuple(self.parameters['mean']['default']),
+                                     swapRB=self.parameters['swapRB']['default'])
 
 
 class DB18(AbstractTextExtractor):
     def __init__(self):
         self.name = "DB18"
-        self.parameters = {
-
-        }
+        self.parameters = Config("parameters/db18.yaml")
 
         self.model_path = os.path.join(os.getcwd(), 'DB_TD500_resnet18.onnx')
         try:
@@ -160,9 +138,9 @@ class DB18(AbstractTextExtractor):
     def set_parameters(self):
         self.instance.setBinaryThreshold(self.parameters['binary_threshold']['default'])
         self.instance.setPolygonThreshold(self.parameters['polygon_threshold']['default'])
-        self.instance.setInputParams(size=self.parameters['size']['default'],
+        self.instance.setInputParams(size=str_to_tuple(self.parameters['size']['default']),
                                      scale=self.parameters['scale']['default'],
-                                     mean=self.parameters['mean']['default'],
+                                     mean=str_to_tuple(self.parameters['mean']['default']),
                                      swapRB=self.parameters['swapRB']['default'])
 
 

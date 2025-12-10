@@ -49,3 +49,15 @@ def read_file(file_path):
 
 def text_prettifier(text):
     return f'====================//////////{text}//////////===================='
+
+def str_to_tuple(s):
+    s = str(s).strip("()[] ")
+    parts = [p.strip() for p in s.split(",") if p.strip() != ""]
+
+    def to_number(x):
+        try:
+            return int(x)
+        except ValueError:
+            return float(x)
+
+    return tuple(to_number(p) for p in parts)

@@ -3,8 +3,8 @@ class OCRController:
         self.model = model
         self.view = view
         self.frame = view.frames['main_frame']
-        self.frame.settings_frame.ocr_button.main_config(command=self.perform_ocr)
+        self.frame.settings_frame.ocr_button.config(command=self.perform_ocr)
     
     def perform_ocr(self):
         ocr_result = self.model.ocr.perform_ocr(self.model.photo.current_image_keypoints)
-        self.frame.ocr_frame.ocr_label.main_config(text=ocr_result)
+        self.frame.ocr_frame.ocr_label.config(text=ocr_result)

@@ -1,26 +1,33 @@
-"binary_threshold": {
-  "type": "float",
-  "widget": "spinbox",
-  "from_": 0.0,
-  "to": 1.0,
-  "step": 0.01,
-  "default": 0.5,
-}
-"polygon_threshold": {
-  "type": "float",
-  "widget": "spinbox",
-  "from_": 0.0,
-  "to": 1.0,
-  "step": 0.01,
-  "default": 0.4,
-}
-"swapRB": {
-  "type": "bool",
-  "widget": "radiobutton",
-  "default": True,
-}
-"size": {
-  "type": "tuple",
-  "widget": "entry",
-  "default": (1920, 1088),
-}
+binary_threshold:
+  type: float
+  widget: spinbox
+  from_: 0.0
+  to: 1.0
+  step: 0.01
+  default: 0.3
+polygon_threshold:
+  type: float
+  widget: spinbox
+  from_: 0.0
+  to: 1.0
+  step: 0.01
+  default: 0.5
+size:
+  type: tuple
+  widget: entry
+  default: (1920, 1088)
+scale:
+  type: float
+  widget: spinbox
+  from_: 0.0
+  to: 1.0
+  step: 0.01
+  default: 0.0039215686
+mean:
+  type: tuple
+  widget: entry
+  default: (123.68, 116.78, 103.94)
+swapRB:
+  type: bool
+  widget: radiobutton
+  default: true
