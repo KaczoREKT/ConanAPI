@@ -2,6 +2,9 @@ test: True
 window_width: 1180
 window_height: 550
 
+extractor:
+
+
 ocr:
   tesseract_path: 'C:\praktykant\Tesseract-OCR\tesseract'
   config_path: r'--tessdata-dir "C:\praktykant\Tesseract-OCR\tessdata"'
