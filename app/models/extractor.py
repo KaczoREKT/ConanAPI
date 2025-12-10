@@ -3,7 +3,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 import os
-
+from app.other.config import Config
 import cv2
 import numpy as np
 from app.models.preprocessing import to_gray, mask
@@ -147,32 +147,7 @@ class DB18(AbstractTextExtractor):
     def __init__(self):
         self.name = "DB18"
         self.parameters = {
-            "binary_threshold": {
-                "type": "float",
-                "widget": "spinbox",
-                "from_": 0.0,
-                "to": 1.0,
-                "step": 0.01,
-                "default": 0.5,
-            },
-            "polygon_threshold": {
-                "type": "float",
-                "widget": "spinbox",
-                "from_": 0.0,
-                "to": 1.0,
-                "step": 0.01,
-                "default": 0.4,
-            },
-            "swapRB": {
-                "type": "bool",
-                "widget": "radiobutton",
-                "default": True,
-            },
-            "size": {
-                "type": "tuple",
-                "widget": "entry",
-                "default": (1920, 1088),
-            },
+
         }
 
         self.model_path = os.path.join(os.getcwd(), 'DB_TD500_resnet18.onnx')

@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 
 from Model.VPR.new_model import pixel_art_descriptor
-from config import config
+from config import main_config
 import cv2
 import numpy as np
 
@@ -105,7 +105,7 @@ class FeatureExtractor:
 
     def initialize_extractor(self):
         extractor_map = {}
-        match config['extractor']:
+        match main_config['extractor']:
             case 'SIFT':
                 extractor_map = {
                     'nfeatures': [10, 100],
@@ -148,7 +148,7 @@ class FeatureExtractor:
 
     def update_image(self, gray_image, resized_image, parameters):
         new_image = None
-        match config['extractor']:
+        match main_config['extractor']:
             case 'SIFT':
                 new_image = self.sift(gray_image, resized_image, parameters)
             case 'ORB':

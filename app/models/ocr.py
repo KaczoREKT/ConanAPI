@@ -4,8 +4,8 @@ from pathlib import Path
 import cv2
 import pytesseract
 from PIL import Image
-from app.other.config import config
-config = config['ocr']
+from app.other.config import main_config
+config = main_config['ocr']
 # pytesseract.pytesseract.tesseract_cmd = config['tesseract_path']
 # tessdata_dir_config = r'--tessdata-dir "C:\praktykant\Tesseract-OCR\tessdata"'
 class OCR:
@@ -13,7 +13,7 @@ class OCR:
         pass
 
     def save_image(self, filename, image):
-        folder_path = Path(config['output_folder'])
+        folder_path = Path(main_config['output_folder'])
         if not Path(folder_path).exists():
             os.mkdir(folder_path)
         if not Path(os.path.join(folder_path, filename)).exists():

@@ -7,7 +7,7 @@ class ExtractorController:
         self.view = view
         self.frame = view.frames['main_frame']
         self.frame.settings_frame.extractor_combobox.bind("<<ComboboxSelected>>", self._on_change)
-        self.frame.settings_frame.extractor_button.config(command=self.update_image)
+        self.frame.settings_frame.extractor_button.main_config(command=self.update_image)
         self._bind()
 
     def _bind(self) -> None:

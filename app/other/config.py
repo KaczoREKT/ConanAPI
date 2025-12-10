@@ -18,4 +18,4 @@ class Config:
         with open(path, "w") as file:
             yaml.safe_dump(self.config, file, default_flow_style=False)
 
-config = Config()
+main_config = Config()

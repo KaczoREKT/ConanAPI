@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from PIL import ImageGrab
 import logging
-from app.other.config import config
+from app.other.config import main_config
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -21,7 +21,7 @@ def health_bar_color_detection(image, parameters=None):
         return mask
     health_bar = image.copy()
 
-    if config['test']:
+    if main_config['test']:
         x1, x2, y1, y2 = get_trackbar_parameters("Color detection", parameters)
     else:
         x1, x2, y1, y2 = parameters['x1'][0], parameters['x2'][0], parameters['y1'][0], parameters['y2'][0]
