@@ -38,30 +38,22 @@ class AbstractTextExtractor:
 
     def extract(self, image):
         boxes, confidences = self.instance.detect(image)
-        keypoint_image = image.copy()
-        for box in boxes:
-            if len(box) == 5:
-                cx, cy, w, h, angle = box
-                rect = ((cx, cy), (w, h), angle)
-                pts = cv2.boxPoints(rect).astype(int)
-            else:
-                pts = np.array(box, dtype=int).reshape(-1, 2)
-            cv2.polylines(keypoint_image, [pts], isClosed=True, color=(0, 255, 0), thickness=1)
-        return keypoint_image
+        main_keypoint_image = image.copy()
+        sub_keypoint_images = []
+        for box in boxes:  
+            pts = np.array(box, dtype=int).reshape(-1, 2)
+            x, y, w, h = cv2.boundingRect(pts)
+            sub_keypoint_images.append(main_keypoint_image[y:y+h+4, x:x+w+5])
+            cv2.polylines(main_keypoint_image, [pts], isClosed=True, color=(0, 255, 0), thickness=1)
+        return main_keypoint_image, sub_keypoint_images
 
 
 class AbstractStatExtractor:
-    """
-    Ekstraktor do statystyk z UI (Pasek zdrowia, ostrość, stamina).
-    Zamiast szukać punktów, analizuje kolory w konkretnym wycinku (ROI).
-    """
-
     def __init__(self):
         self.name = None
         self.roi = None
 
     def extract(self, image):
-        """Zwraca obraz z narysowanymi statystykami"""
         val = self.get_value(image)
         output_image = image.copy()
         if self.roi:
@@ -280,7 +272,8 @@ class Extractor:
         self.current_extractor = self.extractor_dict['SIFT']
 
     def get_keypoint_image(self, image):
-        return self.current_extractor.extract(image)
+        main_keypoint_image, keypoint_images = self.current_extractor.extract(image)
+        return main_keypoint_image, keypoint_images
 
     def get_extractor_keys(self):
         return list(self.extractor_dict.keys())

@@ -6,5 +6,5 @@ class OCRController:
         self.frame.settings_frame.ocr_button.config(command=self.perform_ocr)
     
     def perform_ocr(self):
-        ocr_result = self.model.ocr.perform_ocr(self.model.photo.current_cv2_image)
+        ocr_result = self.model.ocr.perform_ocr(self.model.photo.current_image_keypoints)
         self.frame.ocr_frame.ocr_label.config(text=ocr_result)

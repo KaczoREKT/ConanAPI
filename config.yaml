@@ -4,3 +4,4 @@ window_height: 550
 
 ocr:
   tesseract_path: 'C:\praktykant\Tesseract-OCR\tesseract'
+  config_path: r'--tessdata-dir "C:\praktykant\Tesseract-OCR\tessdata"'

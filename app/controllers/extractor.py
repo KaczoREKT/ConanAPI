@@ -24,8 +24,9 @@ class ExtractorController:
         return result_extractor
 
     def update_image(self):
-        keypoint_image = self.model.extractor.get_keypoint_image(self.model.photo.current_cv2_image)
-        self.model.photo.current_tk_image = convert_image_to_tkinter(keypoint_image)
+        main_keypoint_image, keypoint_images = self.model.extractor.get_keypoint_image(self.model.photo.current_cv2_image)
+        self.model.photo.current_image_keypoints = keypoint_images
+        self.model.photo.current_tk_image = convert_image_to_tkinter(main_keypoint_image)
         self._update_photo_label()
 
     def _update_photo_label(self) -> None:
