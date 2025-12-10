@@ -17,10 +17,8 @@ class SettingsFrame(tk.Frame):
         self.extractor_combobox = ttk.Combobox(self)
         self.extractor_combobox.grid(row=3, column=0, sticky="nw")
 
-        self.create_extractor_setting()
+        self.extractor_button = tk.Button(self, text="Extract Keypoints")
+        self.extractor_button.grid(row=4, column=0, sticky="nw")
 
-    def create_extractor_setting(self):
-        label = tk.Label(self, text='Dupa')
-        label.grid(row=4, column=0, sticky="nw")
-        spinbox = ttk.Spinbox(self, from_=20, to=100)
-        spinbox.grid(row=5, column=0, sticky="nw")
+        self.ocr_button = tk.Button(self, text="Perform OCR")
+        self.ocr_button.grid(row=5, column=0, sticky="nw")

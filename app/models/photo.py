@@ -6,7 +6,7 @@ from app.models.preprocessing import load_image, convert_image_to_tkinter
 class Photo:
     def __init__(self):
         base_dir = os.getcwd()
-        self.folder = os.path.join(base_dir, "Screenshots")
+        self.folder = os.path.join(base_dir, "test/Screenshots/Conan_Exiles")
         self.screenshots = self.load_screenshots()
         self.current_cv2_image = load_image(list(self.screenshots.values())[0])
         self.current_tk_image = convert_image_to_tkinter(self.current_cv2_image)

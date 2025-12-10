@@ -1,3 +1,6 @@
 test: True
 window_width: 1180
 window_height: 550
+
+ocr:
+  tesseract_path: 'C:\praktykant\Tesseract-OCR\tesseract'

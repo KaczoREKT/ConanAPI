@@ -27,9 +27,9 @@ class PhotoController:
         return result_photo
 
     def update_image(self, screenshot_path: str) -> None:
-        img = load_image(screenshot_path)
-        imgtk = convert_image_to_tkinter(img)
-        self.model.photo.current_cv2_image = img
+        cv2_img = load_image(screenshot_path)
+        imgtk = convert_image_to_tkinter(cv2_img)
+        self.model.photo.current_cv2_image = cv2_img
         self.model.photo.current_tk_image = imgtk
         self.update_photo_label()
 

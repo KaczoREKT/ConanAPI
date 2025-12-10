@@ -47,8 +47,6 @@ class AbstractTextExtractor:
             else:
                 pts = np.array(box, dtype=int).reshape(-1, 2)
             cv2.polylines(keypoint_image, [pts], isClosed=True, color=(0, 255, 0), thickness=1)
-            x, y, w, h = cv2.boundingRect(pts)
-            print(f"x: {x}, y: {y}, width: {w}, height: {h}")
         return keypoint_image
 
 
@@ -138,8 +136,11 @@ class DB50(AbstractTextExtractor):
 
         }
         self.model_path = os.path.join(os.getcwd(), 'DB_TD500_resnet50.onnx')
-        self.instance = cv2.dnn_TextDetectionModel_DB(self.model_path)
-        self.set_parameters()
+        try:
+            self.instance = cv2.dnn_TextDetectionModel_DB(self.model_path)
+            self.set_parameters()
+        except SystemError as e:
+            logger.error(e) 
 
     def set_parameters(self):
         self.instance.setBinaryThreshold(self.parameters['binary_threshold'])
@@ -163,9 +164,12 @@ class DB18(AbstractTextExtractor):
 
         }
         self.model_path = os.path.join(os.getcwd(), 'DB_TD500_resnet18.onnx')
-        self.instance = cv2.dnn_TextDetectionModel_DB(self.model_path)
-        self.set_parameters()
-
+        try:
+            self.instance = cv2.dnn_TextDetectionModel_DB(self.model_path)
+            self.set_parameters()
+        except SystemError as e:
+            logger.error(e) 
+            
     def set_parameters(self):
         self.instance.setBinaryThreshold(self.parameters['binary_threshold'])
         self.instance.setPolygonThreshold(self.parameters['polygon_threshold'])

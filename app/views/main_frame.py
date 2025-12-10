@@ -3,7 +3,7 @@ from tkinter import ttk
 
 from app.views.photo_frame import PhotoFrame
 from app.views.settings_frame import SettingsFrame
-
+from app.views.ocr_frame import OCRFrame
 
 class MainFrame(tk.Frame):
     def __init__(self, root):
@@ -14,6 +14,9 @@ class MainFrame(tk.Frame):
 
         self.settings_frame = SettingsFrame()
         self.settings_frame.grid(row=0, column=1, sticky='nsew')
+
+        self.ocr_frame = OCRFrame()
+        self.ocr_frame.grid(row=1, column=0, sticky='nsew')
 
 
 

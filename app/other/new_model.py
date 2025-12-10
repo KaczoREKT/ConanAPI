@@ -13,7 +13,7 @@ def quantize_palette(img, k=16):
     criteria=(cv2.TERM_CRITERIA_EPS+cv2.TERM_CRITERIA_MAX_ITER,20,0.5)
     ret,labels,centers = cv2.kmeans(Z,k,None,criteria,3,cv2.KMEANS_PP_CENTERS)
     centers = centers.astype(np.uint8)
-    q = centers[labels.flatten()].reshape(img.shape)
+    q = centers[labels.flatten()].reshape(img.shape)dupa
     idx = labels.reshape(img.shape[:2])
     return q, idx, centers
 

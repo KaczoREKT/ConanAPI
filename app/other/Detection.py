@@ -13,7 +13,7 @@ def update(_):
     text_detector.setInputSize((width, height))
     boxes, confidences = text_detector.detect(image)
     display = image.copy()
-    for box in boxes:
+    for box in boxes:blokuj ekran
         if len(box) == 5:
             cx, cy, w, h, angle = box
             rect = ((cx, cy), (w, h), angle)
