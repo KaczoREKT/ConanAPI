@@ -15,11 +15,11 @@ def normalize(image):
 
 def load_image(screenshot_path: str):
     img = cv2.imread(screenshot_path)
-    img = resize(img, size=(960, 540))
     return img
 
 def convert_image_to_tkinter(image):
     img = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    img = resize(img, size=(960, 540))
     im = Image.fromarray(img)
     imgtk = ImageTk.PhotoImage(image=im)
     return imgtk
