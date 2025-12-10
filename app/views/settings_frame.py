@@ -22,3 +22,7 @@ class SettingsFrame(tk.Frame):
 
         self.ocr_button = tk.Button(self, text="Perform OCR")
         self.ocr_button.grid(row=5, column=0, sticky="nw")
+
+class ParametersFrame(tk.Frame):
+    def __init__(self):
+        super().__init__()
