@@ -43,7 +43,7 @@ class AbstractTextExtractor:
         for box in boxes:  
             pts = np.array(box, dtype=int).reshape(-1, 2)
             x, y, w, h = cv2.boundingRect(pts)
-            sub_keypoint_images.append(main_keypoint_image[y:y+h+4, x:x+w+5])
+            sub_keypoint_images.append(main_keypoint_image[y:y+h, x:x+w])
             cv2.polylines(main_keypoint_image, [pts], isClosed=True, color=(0, 255, 0), thickness=1)
         return main_keypoint_image, sub_keypoint_images
 
@@ -147,14 +147,34 @@ class DB18(AbstractTextExtractor):
     def __init__(self):
         self.name = "DB18"
         self.parameters = {
-            'binary_threshold': 0.5,
-            'polygon_threshold': 0.4,
-            'size': (1920, 1088),
-            'scale': 1.0 / 255.0,
-            'mean': (123.68, 116.78, 103.94),
-            'swapRB': True,
-
+            "binary_threshold": {
+                "type": "float",
+                "widget": "spinbox",
+                "from_": 0.0,
+                "to": 1.0,
+                "step": 0.01,
+                "default": 0.5,
+            },
+            "polygon_threshold": {
+                "type": "float",
+                "widget": "spinbox",
+                "from_": 0.0,
+                "to": 1.0,
+                "step": 0.01,
+                "default": 0.4,
+            },
+            "swapRB": {
+                "type": "bool",
+                "widget": "radiobutton",
+                "default": True,
+            },
+            "size": {
+                "type": "tuple",
+                "widget": "entry",
+                "default": (1920, 1088),
+            },
         }
+
         self.model_path = os.path.join(os.getcwd(), 'DB_TD500_resnet18.onnx')
         try:
             self.instance = cv2.dnn_TextDetectionModel_DB(self.model_path)
@@ -163,12 +183,12 @@ class DB18(AbstractTextExtractor):
             logger.error(e) 
             
     def set_parameters(self):
-        self.instance.setBinaryThreshold(self.parameters['binary_threshold'])
-        self.instance.setPolygonThreshold(self.parameters['polygon_threshold'])
-        self.instance.setInputParams(size=self.parameters['size'],
-                                     scale=self.parameters['scale'],
-                                     mean=self.parameters['mean'],
-                                     swapRB=self.parameters['swapRB'])
+        self.instance.setBinaryThreshold(self.parameters['binary_threshold']['default'])
+        self.instance.setPolygonThreshold(self.parameters['polygon_threshold']['default'])
+        self.instance.setInputParams(size=self.parameters['size']['default'],
+                                     scale=self.parameters['scale']['default'],
+                                     mean=self.parameters['mean']['default'],
+                                     swapRB=self.parameters['swapRB']['default'])
 
 
 class HealthExtractor(AbstractStatExtractor):
