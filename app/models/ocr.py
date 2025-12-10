@@ -4,7 +4,7 @@ from PIL import Image
 from app.other.config import config
 config = config['ocr']
 pytesseract.pytesseract.tesseract_cmd = config['tesseract_path']
-
+tessdata_dir_config = r'--tessdata-dir "C:\praktykant\Tesseract-OCR\tessdata"'
 class OCR:
     def __init__(self):
         pass
@@ -14,8 +14,9 @@ class OCR:
         for image in keypoint_images:
             img_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             ocr_result = pytesseract.image_to_string(image=img_rgb, 
-                                                     lang='pl',
-                                                     config = r'--tessdata-dir "C:\praktykant\Tesseract-OCR\tessdata"')
+                                                    #  lang='pol',
+                                                    #  config = tessdata_dir_config
+                                                    )
             if ocr_result.strip() != "":
                 print("OCR Result for one keypoint image:" + ocr_result)
                 result += ocr_result
