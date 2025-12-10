@@ -10,7 +10,6 @@ class Photo:
         self.screenshots = self.load_screenshots()
         self.current_cv2_image = load_image(list(self.screenshots.values())[0])
         self.current_tk_image = convert_image_to_tkinter(self.current_cv2_image)
-        self.current_image_keypoints = None
 
     def load_screenshots(self) -> dict[str, str]:
         files = os.listdir(self.folder)

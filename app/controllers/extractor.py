@@ -18,6 +18,7 @@ class ExtractorController:
     def _on_change(self, event) -> None:
         chosen_extractor = self.get_selected_from_combobox()
         self.model.extractor.current_extractor = self.model.extractor.extractor_dict[chosen_extractor]
+        self.frame.parameters_frame.create_parameters_widgets(self.model.extractor.current_extractor.parameters.config)
 
 
     def get_selected_from_combobox(self) -> str:
@@ -25,9 +26,10 @@ class ExtractorController:
         return result_extractor
 
     def update_image(self):
-        main_keypoint_image, keypoint_images = self.model.extractor.get_keypoint_image(self.model.photo.current_cv2_image)
-        self.model.photo.current_image_keypoints = keypoint_images
-        self.model.photo.current_tk_image = convert_image_to_tkinter(main_keypoint_image)
+        self.model.extractor.parameters = self.frame.parameters_frame.get_parameters()
+        keypoint_image, keypoints = self.model.extractor.get_keypoint_image(self.model.photo.current_cv2_image)
+        self.model.extractor.current_image_keypoints = keypoints
+        self.model.photo.current_tk_image = convert_image_to_tkinter(keypoint_image)
         self._update_photo_label()
 
     def _update_photo_label(self) -> None:

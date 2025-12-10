@@ -40,14 +40,16 @@ class AbstractTextExtractor:
 
     def extract(self, image):
         boxes, confidences = self.instance.detect(image)
-        main_keypoint_image = image.copy()
-        sub_keypoint_images = []
+        keypoint_image = image.copy()
+        keypoints = []
         for box in boxes:  
             pts = np.array(box, dtype=int).reshape(-1, 2)
             x, y, w, h = cv2.boundingRect(pts)
-            sub_keypoint_images.append(main_keypoint_image[y:y+h, x:x+w])
-            cv2.polylines(main_keypoint_image, [pts], isClosed=True, color=(0, 255, 0), thickness=1)
-        return main_keypoint_image, sub_keypoint_images
+            keypoints.append({
+                'x': x, 'y': y, 'w': w, 'h': h
+            })
+            cv2.polylines(keypoint_image, [pts], isClosed=True, color=(0, 255, 0), thickness=1)
+        return keypoint_image, keypoints
 
 
 class AbstractStatExtractor:
@@ -243,6 +245,7 @@ class Extractor:
             'Health': HealthExtractor()
         }
         self.current_extractor = self.extractor_dict['SIFT']
+        self.current_image_keypoints = None
 
     def get_keypoint_image(self, image):
         main_keypoint_image, keypoint_images = self.current_extractor.extract(image)

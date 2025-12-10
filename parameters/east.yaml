@@ -29,5 +29,5 @@ mean:
   default: [123.68, 116.78, 103.94]
 swapRB:
   type: bool
-  widget: radiobutton
+  widget: checkbox
   default: true

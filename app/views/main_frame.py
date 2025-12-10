@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 
+from app.views.parameters_frame import ParametersFrame
 from app.views.photo_frame import PhotoFrame
 from app.views.settings_frame import SettingsFrame
 from app.views.ocr_frame import OCRFrame
@@ -17,6 +18,9 @@ class MainFrame(tk.Frame):
 
         self.ocr_frame = OCRFrame()
         self.ocr_frame.grid(row=1, column=0, sticky='nsew')
+
+        self.parameters_frame = ParametersFrame()
+        self.parameters_frame.grid(row=0, column=2, sticky='nsew')
 
 
 

@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 
 import cv2
+import numpy
 import pytesseract
 from PIL import Image
 from app.other.config import main_config
@@ -19,17 +20,46 @@ class OCR:
         if not Path(os.path.join(folder_path, filename)).exists():
             cv2.imwrite(os.path.join(folder_path, filename), image)
 
-    def perform_ocr(self, keypoint_images: list) -> str:
+    def sort_reading_order(self, keypoint_images, line_threshold=10):
+        boxes = sorted(keypoint_images, key=lambda b: (b["y"], b["x"]))
+
+        rows = []
+        for box in boxes:
+            placed = False
+            for row in rows:
+                if abs(box["y"] - row["mean_y"]) <= line_threshold:
+                    row["items"].append(box)
+                    row["mean_y"] = sum(b["y"] for b in row["items"]) / len(row["items"])
+                    placed = True
+                    break
+            if not placed:
+                rows.append({"mean_y": box["y"], "items": [box]})
+
+        rows.sort(key=lambda r: r["mean_y"])
+
+        ordered = []
+        for row in rows:
+            row["items"].sort(key=lambda b: b["x"])
+            ordered.extend(row["items"])
+
+        return ordered
+
+    def perform_ocr(self, image: numpy.ndarray, keypoints: dict) -> str:
         result = ""
-        for i, image in enumerate(keypoint_images):
-            self.save_image(f"{i}.png", image)
-            img_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-            ocr_result = pytesseract.image_to_string(image=img_rgb, 
-                                                    #  lang='pol',
-                                                    #  config = tessdata_dir_config
-                                                    )
-            if ocr_result.strip() != "":
+
+        ordered_boxes = self.sort_reading_order(keypoints, line_threshold=10)
+
+        for i, box in enumerate(ordered_boxes):
+            current_image = image.copy()
+            current_image = current_image[box["y"]:box["y"] + box["h"], box["x"]:box["x"] + box["w"]]
+            self.save_image(f"{i}.png", current_image)
+
+            img_rgb = cv2.cvtColor(current_image, cv2.COLOR_BGR2RGB)
+            ocr_result = pytesseract.image_to_string(img_rgb, lang='pol')
+
+            if ocr_result.strip():
                 result += ocr_result
+
         return result
 
 
