@@ -1,5 +1,6 @@
 from app.models.preprocessing import convert_image_to_tkinter
-
+import threading
+import time
 
 class ExtractorController:
     def __init__(self, model, view):
@@ -8,12 +9,35 @@ class ExtractorController:
         self.frame = view.frames['main_frame']
         self.frame.settings_frame.extractor_combobox.bind("<<ComboboxSelected>>", self._on_change)
         self.frame.settings_frame.extractor_button.config(command=self.update_image)
+        self.frame.settings_frame.loop_button.config(command=self.start_capture_loop)
         self._bind()
 
     def _bind(self) -> None:
         extractor_names = self.model.extractor.get_extractor_keys()
         self.frame.settings_frame.extractor_combobox['values'] = extractor_names
-        self.model.extractor.instance = self.model.extractor.extractor_dict[extractor_names[0]]
+        self.frame.settings_frame.extractor_combobox.current(0)
+    
+    def start_capture_loop(self):
+        capture_thread = threading.Thread(target=self._capture_loop, daemon=True)
+        capture_thread.start()
+
+    def _capture_loop(self, top=30, bottom=25) -> numpy.ndarray:
+        def _crop_img(img):
+            h, w = img.shape[:2]
+            top = 30
+            bottom = 25
+            return img[top:h-bottom, 0:w]
+        while True:
+            screenshot = self.model.windowcapture.get_screenshot()
+            screenshot = _crop_img(screenshot)
+            keypoint_image, keypoints = self.model.extractor.current_extractor.extract(screenshot)
+            imgtk = convert_image_to_tkinter(keypoint_image)
+            self.model.photo.current_cv2_image = screenshot
+            self.model.photo.current_tk_image = imgtk
+            self._update_photo_label()
+            ocr_result = self.model.ocr.perform_ocr(screenshot, keypoints)
+            self.frame.ocr_frame.ocr_label.config(text=ocr_result)
+            time.sleep(0.05)
 
     def _on_change(self, event) -> None:
         chosen_extractor = self.get_selected_from_combobox()

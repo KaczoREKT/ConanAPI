@@ -23,3 +23,6 @@ class SettingsFrame(tk.Frame):
         self.ocr_button = tk.Button(self, text="Perform OCR")
         self.ocr_button.grid(row=5, column=0, sticky="nw")
 
+        self.loop_button = tk.Button(self, text="Start Capture Loop")
+        self.loop_button.grid(row=6, column=0, sticky="nw")
+

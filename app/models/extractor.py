@@ -46,7 +46,10 @@ class AbstractTextExtractor:
             pts = np.array(box, dtype=int).reshape(-1, 2)
             x, y, w, h = cv2.boundingRect(pts)
             keypoints.append({
-                'x': x, 'y': y, 'w': w, 'h': h
+                'x': max(0, x),
+                'y': max(0, y),
+                'w': max(0, w),
+                'h': max(0, h)
             })
             cv2.polylines(keypoint_image, [pts], isClosed=True, color=(0, 255, 0), thickness=1)
         return keypoint_image, keypoints

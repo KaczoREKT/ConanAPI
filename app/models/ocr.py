@@ -7,7 +7,7 @@ import pytesseract
 from PIL import Image
 from app.other.config import main_config
 config = main_config['ocr']
-# pytesseract.pytesseract.tesseract_cmd = config['tesseract_path']
+pytesseract.pytesseract.tesseract_cmd = config['tesseract_path']
 # tessdata_dir_config = r'--tessdata-dir "C:\praktykant\Tesseract-OCR\tessdata"'
 class OCR:
     def __init__(self):
@@ -52,10 +52,10 @@ class OCR:
         for i, box in enumerate(ordered_boxes):
             current_image = image.copy()
             current_image = current_image[box["y"]:box["y"] + box["h"], box["x"]:box["x"] + box["w"]]
-            self.save_image(f"{i}.png", current_image)
 
             img_rgb = cv2.cvtColor(current_image, cv2.COLOR_BGR2RGB)
-            ocr_result = pytesseract.image_to_string(img_rgb, lang='pol')
+            self.save_image(f"ocr_box_{i}.png", current_image)
+            ocr_result = pytesseract.image_to_string(current_image, lang='pol')
 
             if ocr_result.strip():
                 result += ocr_result

@@ -1,5 +1,7 @@
 import logging
+import threading
 from app.models.preprocessing import load_image, convert_image_to_tkinter
+import time
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -15,6 +17,7 @@ class PhotoController:
 
     def _bind(self) -> None:
         self.frame.settings_frame.photo_combobox['values'] = self.model.photo.get_screenshot_names()
+        self.frame.settings_frame.photo_combobox.current(0)
         self.update_image(list(self.model.photo.screenshots.values())[0])
 
     def on_change(self, event) -> None:
