@@ -1,15 +1,17 @@
 from app.models.preprocessing import convert_image_to_tkinter
 import threading
 import time
+from app.other.utils import crop_img
+import numpy
 
 class ExtractorController:
-    def __init__(self, model, view):
+    def __init__(self, model, view) -> None:
         self.model = model
         self.view = view
         self.frame = view.frames['main_frame']
         self.frame.settings_frame.extractor_combobox.bind("<<ComboboxSelected>>", self._on_change)
         self.frame.settings_frame.extractor_button.config(command=self.update_image)
-        self.frame.settings_frame.loop_button.config(command=self.start_capture_loop)
+        self.frame.settings_frame.loop_button.config(command=self.start_capture_loop)blokujemy pulpit
         self._bind()
 
     def _bind(self) -> None:
@@ -17,19 +19,14 @@ class ExtractorController:
         self.frame.settings_frame.extractor_combobox['values'] = extractor_names
         self.frame.settings_frame.extractor_combobox.current(0)
     
-    def start_capture_loop(self):
+    def start_capture_loop(self) -> None:
         capture_thread = threading.Thread(target=self._capture_loop, daemon=True)
         capture_thread.start()
 
-    def _capture_loop(self, top=30, bottom=25) -> numpy.ndarray:
-        def _crop_img(img):
-            h, w = img.shape[:2]
-            top = 30
-            bottom = 25
-            return img[top:h-bottom, 0:w]
+    def _capture_loop(self) -> numpy.ndarray:
         while True:
             screenshot = self.model.windowcapture.get_screenshot()
-            screenshot = _crop_img(screenshot)
+            screenshot = crop_img(screenshot, top=30, bottom=25)
             keypoint_image, keypoints = self.model.extractor.current_extractor.extract(screenshot)
             imgtk = convert_image_to_tkinter(keypoint_image)
             self.model.photo.current_cv2_image = screenshot
@@ -40,12 +37,12 @@ class ExtractorController:
             time.sleep(0.05)
 
     def _on_change(self, event) -> None:
-        chosen_extractor = self.get_selected_from_combobox()
+        chosen_extractor = self._get_selected_from_combobox()
         self.model.extractor.current_extractor = self.model.extractor.extractor_dict[chosen_extractor]
         self.frame.parameters_frame.create_parameters_widgets(self.model.extractor.current_extractor.parameters.config)
 
 
-    def get_selected_from_combobox(self) -> str:
+    def _get_selected_from_combobox(self) -> str:
         result_extractor = self.frame.settings_frame.extractor_combobox.get()
         return result_extractor
 

@@ -61,3 +61,10 @@ def str_to_tuple(s):
             return float(x)
 
     return tuple(to_number(p) for p in parts)
+
+
+def crop_img(img, top: int = 30, bottom: int = 25) -> numpy.ndarray:
+            h, w = img.shape[:2]
+            top = 30
+            bottom = 25
+            return img[top:h-bottom, 0:w]
