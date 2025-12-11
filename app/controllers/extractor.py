@@ -11,7 +11,7 @@ class ExtractorController:
         self.frame = view.frames['main_frame']
         self.frame.settings_frame.extractor_combobox.bind("<<ComboboxSelected>>", self._on_change)
         self.frame.settings_frame.extractor_button.config(command=self.update_image)
-        self.frame.settings_frame.loop_button.config(command=self.start_capture_loop)blokujemy pulpit
+        self.frame.settings_frame.loop_button.config(command=self.start_capture_loop)
         self._bind()
 
     def _bind(self) -> None:
@@ -34,7 +34,7 @@ class ExtractorController:
             self._update_photo_label()
             ocr_result = self.model.ocr.perform_ocr(screenshot, keypoints)
             self.frame.ocr_frame.ocr_label.config(text=ocr_result)
-            time.sleep(0.05)
+            time.sleep(0.01)
 
     def _on_change(self, event) -> None:
         chosen_extractor = self._get_selected_from_combobox()

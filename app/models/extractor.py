@@ -38,6 +38,10 @@ class AbstractTextExtractor:
     def set_parameters(self):
         raise NotImplementedError
 
+    def set_gpu_backend(self):
+        self.instance.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
+        self.instance.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
+
     def extract(self, image):
         boxes, confidences = self.instance.detect(image)
         keypoint_image = image.copy()
@@ -96,8 +100,11 @@ class EAST(AbstractTextExtractor):
         self.name = "EAST"
         self.parameters = Config("parameters/east.yaml")
         self.east_model_path = os.path.join(os.getcwd(), 'frozen_east_text_detection.pb')
-        self.instance = cv2.dnn.TextDetectionModel_EAST(self.east_model_path)
-        self.set_parameters()
+        try:
+            self.instance = cv2.dnn.TextDetectionModel_EAST(self.east_model_path)
+            self.set_parameters()
+        except SystemError as e:
+            logger.error(e)
 
     def set_parameters(self):
         self.instance.setConfidenceThreshold(self.parameters['confidence_threshold']['default'])

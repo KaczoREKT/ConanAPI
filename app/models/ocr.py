@@ -4,10 +4,9 @@ from pathlib import Path
 import cv2
 import numpy
 import pytesseract
-from PIL import Image
 from app.other.config import main_config
 config = main_config['ocr']
-pytesseract.pytesseract.tesseract_cmd = config['tesseract_path']
+# pytesseract.pytesseract.tesseract_cmd = config['tesseract_path']
 # tessdata_dir_config = r'--tessdata-dir "C:\praktykant\Tesseract-OCR\tessdata"'
 class OCR:
     def __init__(self):
@@ -22,7 +21,6 @@ class OCR:
 
     def sort_reading_order(self, keypoint_images, line_threshold=10):
         boxes = sorted(keypoint_images, key=lambda b: (b["y"], b["x"]))
-
         rows = []
         for box in boxes:
             placed = False
@@ -55,7 +53,7 @@ class OCR:
 
             img_rgb = cv2.cvtColor(current_image, cv2.COLOR_BGR2RGB)
             self.save_image(f"ocr_box_{i}.png", current_image)
-            ocr_result = pytesseract.image_to_string(current_image, lang='pol')
+            ocr_result = pytesseract.image_to_string(current_image, lang='eng')
 
             if ocr_result.strip():
                 result += ocr_result

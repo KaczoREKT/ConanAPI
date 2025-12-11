@@ -8,4 +8,4 @@ class Model:
         self.photo = Photo()
         self.extractor = Extractor()
         self.ocr = OCR()
-        self.windowcapture = WindowCapture("Project64")
+        self.windowcapture = WindowCapture()

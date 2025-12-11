@@ -1,7 +1,7 @@
 from datetime import time
 import os
 import time
-from pathlib import Path
+import numpy
 from typing import Union
 
 def save_to_txt(file_name: str, *output_texts: Union[str, list], timestamp: bool = False) -> None:
