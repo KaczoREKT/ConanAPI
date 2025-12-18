@@ -1,7 +1,7 @@
-from app.models.extractor import Extractor
-from app.models.photo import Photo
-from app.models.ocr import OCR
-from app.models.windowcapture import WindowCapture
+from .extractor import Extractor
+from .photo import Photo
+from .ocr import OCR
+from .windowcapture import WindowCapture
 
 class Model:
     def __init__(self):

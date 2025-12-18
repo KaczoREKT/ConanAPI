@@ -1,14 +1,14 @@
 import logging
 
-from app.other.utils import str_to_tuple
+from src.other.utils import str_to_tuple
 
 logger = logging.getLogger(__name__)
 
 import os
-from app.other.config import Config
+from src.other.config import Config
 import cv2
 import numpy as np
-from app.models.preprocessing import to_gray, mask
+from .preprocessing import to_gray, mask
 
 
 class AbstractFeatureExtractor:

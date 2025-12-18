@@ -1,5 +1,5 @@
 import tkinter as tk
-from app.other.config import main_config
+from src.other.config import config
 
 class Root(tk.Tk):
     def __init__(self):

@@ -4,8 +4,8 @@ from pathlib import Path
 import cv2
 import numpy
 import pytesseract
-from app.other.config import main_config
-config = main_config['ocr']
+from src.other.config import config
+config = config['ocr']
 # pytesseract.pytesseract.tesseract_cmd = config['tesseract_path']
 # tessdata_dir_config = r'--tessdata-dir "C:\praktykant\Tesseract-OCR\tessdata"'
 class OCR:

@@ -1,5 +1,5 @@
 import yaml
-from app.other.utils import read_file
+from .utils import read_file
 
 class Config:
     def __init__(self, path="config.yaml"):
@@ -19,4 +19,4 @@ class Config:
         with open(self.path, "w") as file:
             yaml.safe_dump(self.config, file, default_flow_style=False)
 
-main_config = Config()
+config = Config()

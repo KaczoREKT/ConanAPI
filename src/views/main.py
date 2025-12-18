@@ -1,7 +1,7 @@
 from typing import TypedDict
 
-from app.views.main_frame import MainFrame
-from app.views.root import Root
+from .main_frame import MainFrame
+from .root import Root
 
 
 class Frames(TypedDict):

@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from PIL import ImageGrab
 import logging
-from app.other.config import main_config
+from src.other.config import main_config
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

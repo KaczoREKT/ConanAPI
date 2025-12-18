@@ -1,6 +1,6 @@
 import os
 
-from app.models.preprocessing import load_image, convert_image_to_tkinter
+from .preprocessing import load_image, convert_image_to_tkinter
 
 
 class Photo:

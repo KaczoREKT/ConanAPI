@@ -1,10 +1,10 @@
 import tkinter as tk
 from tkinter import ttk
 
-from app.views.parameters_frame import ParametersFrame
-from app.views.photo_frame import PhotoFrame
-from app.views.settings_frame import SettingsFrame
-from app.views.ocr_frame import OCRFrame
+from .parameters_frame import ParametersFrame
+from .photo_frame import PhotoFrame
+from .settings_frame import SettingsFrame
+from .ocr_frame import OCRFrame
 
 class MainFrame(tk.Frame):
     def __init__(self, root):
