@@ -1,8 +1,8 @@
-from app.controllers.extractor import ExtractorController
-from app.controllers.photo import PhotoController
-from app.controllers.ocr import OCRController
-from app.models.main import Model
-from app.views.main import View
+from src.controllers.extractor import ExtractorController
+from src.controllers.photo import PhotoController
+from src.controllers.ocr import OCRController
+from src.models.main import Model
+from src.views.main import View
 
 class Controller:
     def __init__(self, model: Model, view: View):

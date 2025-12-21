@@ -1,7 +1,7 @@
-from app.models.preprocessing import convert_image_to_tkinter
+from src.models.preprocessing import convert_image_to_tkinter
 import threading
 import time
-from app.other.utils import crop_img
+from src.other.utils import crop_img
 import numpy
 
 class ExtractorController:

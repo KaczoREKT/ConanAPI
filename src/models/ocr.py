@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 
 import cv2
+import easyocr
 import numpy
 import pytesseract
 from src.other.config import config
@@ -60,6 +61,9 @@ class OCR:
 
         return result
 
-
+if __name__ == "__main__":
+    reader = easyocr.Reader(['pl', 'en'], gpu=True)
+    result = reader.readtext('../../test/Screenshots/Conan_Exiles/20250924190109_1.jpg')
+    print(result)
 
         

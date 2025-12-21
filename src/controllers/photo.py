@@ -1,6 +1,6 @@
 import logging
 import threading
-from app.models.preprocessing import load_image, convert_image_to_tkinter
+from src.models.preprocessing import load_image, convert_image_to_tkinter
 import time
 
 logger = logging.getLogger(__name__)
