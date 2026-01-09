@@ -14,20 +14,20 @@ polygon_threshold:
   default: 0.5
 size:
   type: tuple
-  widget: entry
+  widget: None
   default: (1920, 1088)
 scale:
   type: float
   widget: spinbox
-  from_: 0.0
+  from_: 0.001
   to: 1.0
-  step: 0.01
+  step: 0.0001
   default: 0.0039215686
 mean:
   type: tuple
-  widget: entry
+  widget: None
   default: (123.68, 116.78, 103.94)
 swapRB:
   type: bool
-  widget: checkbox
+  widget: None
   default: true

@@ -1,0 +1,95 @@
+min_size:
+  type: int
+  widget: spinbox
+  from_: 0
+  to: 200
+  step: 1
+  default: 10
+
+text_threshold:
+  type: float
+  widget: spinbox
+  from_: 0.0
+  to: 1.0
+  step: 0.01
+  default: 0.7
+
+low_text:
+  type: float
+  widget: spinbox
+  from_: 0.0
+  to: 1.0
+  step: 0.01
+  default: 0.4
+
+link_threshold:
+  type: float
+  widget: spinbox
+  from_: 0.0
+  to: 1.0
+  step: 0.01
+  default: 0.4
+
+canvas_size:
+  type: int
+  widget: spinbox
+  from_: 256
+  to: 6000
+  step: 32
+  default: 2560
+
+mag_ratio:
+  type: float
+  widget: spinbox
+  from_: 0.5
+  to: 5.0
+  step: 0.1
+  default: 1.0
+
+slope_ths:
+  type: float
+  widget: spinbox
+  from_: 0.0
+  to: 2.0
+  step: 0.01
+  default: 0.1
+
+ycenter_ths:
+  type: float
+  widget: spinbox
+  from_: 0.0
+  to: 2.0
+  step: 0.01
+  default: 0.5
+
+height_ths:
+  type: float
+  widget: spinbox
+  from_: 0.0
+  to: 2.0
+  step: 0.01
+  default: 0.5
+
+width_ths:
+  type: float
+  widget: spinbox
+  from_: 0.0
+  to: 5.0
+  step: 0.01
+  default: 0.5
+
+add_margin:
+  type: float
+  widget: spinbox
+  from_: 0.0
+  to: 1.0
+  step: 0.01
+  default: 0.1
+
+optimal_num_chars:
+  type: int
+  widget: spinbox
+  from_: 0
+  to: 200
+  step: 1
+  default: 0

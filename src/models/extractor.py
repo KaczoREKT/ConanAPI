@@ -1,5 +1,8 @@
 import logging
 
+import easyocr
+from easyocr.craft import CRAFT
+
 from src.other.utils import str_to_tuple
 
 logger = logging.getLogger(__name__)
@@ -50,9 +53,10 @@ class EAST(AbstractTextExtractor):
     def set_parameters(self):
         self.instance.setConfidenceThreshold(self.parameters['confidence_threshold']['default'])
         self.instance.setNMSThreshold(self.parameters['nms_threshold']['default'])
+        print(str_to_tuple(self.parameters['size']['default']))
         self.instance.setInputParams(size=str_to_tuple(self.parameters['size']['default']),
                                      scale=self.parameters['scale']['default'],
-                                     mean=self.parameters['mean']['default'],
+                                     mean=str_to_tuple(self.parameters['mean']['default']),
                                      swapRB=self.parameters['swapRB']['default'])
 
 
@@ -85,6 +89,7 @@ class DB18(AbstractTextExtractor):
         try:
             self.instance = cv2.dnn_TextDetectionModel_DB(self.model_path)
             self.set_parameters()
+            print("Dobry model")
         except SystemError as e:
             logger.error(e)
 
@@ -95,6 +100,106 @@ class DB18(AbstractTextExtractor):
                                      scale=self.parameters['scale']['default'],
                                      mean=str_to_tuple(self.parameters['mean']['default']),
                                      swapRB=self.parameters['swapRB']['default'])
+class MyDB18(AbstractTextExtractor):
+    def __init__(self):
+        self.name = "DB18"
+        self.parameters = Config("parameters/mydb18.yaml")
+        self.instance = easyocr.Reader(['pl', 'en'], gpu=True, detect_network='dbnet18')
+        self.set_parameters()
+
+    def set_parameters(self):
+        pass
+
+    def extract(self, image):
+        horizontal_list, free_list = self.instance.detect(image,
+                                                          min_size=self.parameters['min_size']['default'],
+                                                          text_threshold=self.parameters['text_threshold']['default'],
+                                                          link_threshold=self.parameters['link_threshold']['default'],
+                                                          low_text=self.parameters['low_text']['default'],
+                                                          canvas_size=self.parameters['canvas_size']['default'],
+                                                          mag_ratio=self.parameters['mag_ratio']['default'],
+                                                          slope_ths=self.parameters['slope_ths']['default'],
+                                                          ycenter_ths=self.parameters['ycenter_ths']['default'],
+                                                          height_ths=self.parameters['height_ths']['default'],
+                                                          width_ths=self.parameters['width_ths']['default'],
+                                                          add_margin=self.parameters['add_margin']['default'],
+                                                          optimal_num_chars=self.parameters['optimal_num_chars']['default'])
+        keypoint_image = image.copy()
+        keypoints = []
+
+        for group in horizontal_list:
+            for (x_min, x_max, y_min, y_max) in group:
+                x_min, x_max, y_min, y_max = map(int, (x_min, x_max, y_min, y_max))
+
+                pts = np.array([
+                    [x_min, y_min],
+                    [x_max, y_min],
+                    [x_max, y_max],
+                    [x_min, y_max],
+                ], dtype=np.int32)
+
+                x, y, w, h = cv2.boundingRect(pts)
+                keypoints.append({'x': max(0, x), 'y': max(0, y), 'w': max(0, w), 'h': max(0, h)})
+
+                cv2.polylines(keypoint_image, [pts], True, (0, 255, 0), 1)
+        for group in free_list:
+            for quad in group:
+                pts = np.array(quad, dtype=np.int32)
+                x, y, w, h = cv2.boundingRect(pts)
+                keypoints.append({'x': max(0, x), 'y': max(0, y), 'w': max(0, w), 'h': max(0, h)})
+                cv2.polylines(keypoint_image, [pts], True, (0, 255, 0), 1)
+
+        return keypoint_image, keypoints
+class MyCRAFT(AbstractTextExtractor):
+    def __init__(self):
+        self.name = "CRAFT"
+        self.parameters = Config("parameters/craft.yaml")
+        self.instance = easyocr.Reader(['pl', 'en'], gpu=True)
+        self.set_parameters()
+
+    def set_parameters(self):
+        pass
+
+    def extract(self, image):
+        horizontal_list, free_list = self.instance.detect(image,
+                                                          min_size=self.parameters['min_size']['default'],
+                                                          text_threshold=self.parameters['text_threshold']['default'],
+                                                          link_threshold=self.parameters['link_threshold']['default'],
+                                                          low_text=self.parameters['low_text']['default'],
+                                                          canvas_size=self.parameters['canvas_size']['default'],
+                                                          mag_ratio=self.parameters['mag_ratio']['default'],
+                                                          slope_ths=self.parameters['slope_ths']['default'],
+                                                          ycenter_ths=self.parameters['ycenter_ths']['default'],
+                                                          height_ths=self.parameters['height_ths']['default'],
+                                                          width_ths=self.parameters['width_ths']['default'],
+                                                          add_margin=self.parameters['add_margin']['default'],
+                                                          optimal_num_chars=self.parameters['optimal_num_chars']['default'])
+        keypoint_image = image.copy()
+        keypoints = []
+
+        for group in horizontal_list:
+            for (x_min, x_max, y_min, y_max) in group:
+                x_min, x_max, y_min, y_max = map(int, (x_min, x_max, y_min, y_max))
+
+                pts = np.array([
+                    [x_min, y_min],
+                    [x_max, y_min],
+                    [x_max, y_max],
+                    [x_min, y_max],
+                ], dtype=np.int32)
+
+                x, y, w, h = cv2.boundingRect(pts)
+                keypoints.append({'x': max(0, x), 'y': max(0, y), 'w': max(0, w), 'h': max(0, h)})
+
+                cv2.polylines(keypoint_image, [pts], True, (0, 255, 0), 1)
+        for group in free_list:
+            for quad in group:
+                pts = np.array(quad, dtype=np.int32)
+                x, y, w, h = cv2.boundingRect(pts)
+                keypoints.append({'x': max(0, x), 'y': max(0, y), 'w': max(0, w), 'h': max(0, h)})
+                cv2.polylines(keypoint_image, [pts], True, (0, 255, 0), 1)
+
+        return keypoint_image, keypoints
 
 class Extractor:
     def __init__(self):
@@ -102,6 +207,7 @@ class Extractor:
             'EAST': EAST(),
             'DB50': DB50(),
             'DB18': DB18(),
+            'CRAFT': MyCRAFT()
         }
         self.current_extractor = self.extractor_dict['EAST']
         self.current_image_keypoints = None
@@ -115,4 +221,11 @@ class Extractor:
 
 
 if __name__ == "__main__":
-    pass
+    image = cv2.imread('../../test/Screenshots/Conan_Exiles/20250924190109_1.jpg')
+    extractor = MyCRAFT()
+    result = extractor.extract(image)
+    print(result)
+    extractor = DB18()
+    result = extractor.extract(image)
+    print(result)
+

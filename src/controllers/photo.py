@@ -33,6 +33,7 @@ class PhotoController:
         cv2_img = load_image(screenshot_path)
         imgtk = convert_image_to_tkinter(cv2_img)
         self.model.photo.current_cv2_image = cv2_img
+        self.model.photo.current_preprocessed_image = cv2_img
         self.model.photo.current_tk_image = imgtk
         self.update_photo_label()
 
